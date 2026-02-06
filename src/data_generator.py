@@ -20,8 +20,38 @@ class AttendanceDataGenerator:
     
     def __init__(self, config_path='config.yaml'):
         """Initialize generator with config file."""
-        with open(config_path, 'r') as f:
-            self.config = yaml.safe_load(f)
+        # Convert to Path object and resolve to absolute path
+        config_file = Path(config_path)
+        
+        # If not found, try looking in parent directory (for when running from src/)
+        if not config_file.exists():
+            script_dir = Path(__file__).parent.parent  # Go up from src/ to root
+            config_file = script_dir / 'config.yaml'
+            
+        if not config_file.exists():
+            logger.error(f"❌ Config file not found!")
+            logger.error(f"Looked in: {Path(config_path).absolute()}")
+            logger.error(f"Also tried: {config_file.absolute()}")
+            logger.error(f"Current directory: {Path.cwd()}")
+            logger.error("\nMake sure config.yaml is in your project root!")
+            import sys
+            sys.exit(1)
+        
+        logger.info(f"Loading config from: {config_file.absolute()}")
+        
+        try:
+            with open(config_file, 'r') as f:
+                self.config = yaml.safe_load(f)
+            
+            if self.config is None:
+                logger.error("❌ Config file is empty or invalid YAML!")
+                import sys
+                sys.exit(1)
+                
+        except Exception as e:
+            logger.error(f"❌ Error reading config: {e}")
+            import sys
+            sys.exit(1)
         
         self.num_students = self.config['data']['num_students']
         self.num_days = self.config['data']['num_days']
@@ -30,6 +60,7 @@ class AttendanceDataGenerator:
         self.student_types = self.config['data']['student_types']
         self.attendance_probs = self.config['data']['attendance_probabilities']
         
+        logger.info(f"✅ Config loaded successfully")
         logger.info(f"Initialized generator: {self.num_students} students, {self.num_days} days")
     
     def generate_student_profiles(self):
@@ -137,7 +168,7 @@ class AttendanceDataGenerator:
                 })
         
         df = pd.DataFrame(all_records)
-        logger.info(f"Generated {len(df)} attendance records")
+        logger.info(f"✅ Generated {len(df):,} attendance records")
         
         return df, profiles
     
@@ -164,12 +195,12 @@ class AttendanceDataGenerator:
         # Save main dataset
         data_path = output_dir / 'attendance_data.csv'
         df.to_csv(data_path, index=False)
-        logger.info(f"Saved attendance data to {data_path}")
+        logger.info(f"✅ Saved attendance data to {data_path}")
         
         # Save student profiles
         profiles_path = output_dir / 'student_profiles.csv'
         profiles.to_csv(profiles_path, index=False)
-        logger.info(f"Saved student profiles to {profiles_path}")
+        logger.info(f"✅ Saved student profiles to {profiles_path}")
         
         # Save metadata
         metadata = {
@@ -177,13 +208,14 @@ class AttendanceDataGenerator:
             'num_days': self.num_days,
             'total_records': len(df),
             'date_range': f"{df['date'].min()} to {df['date'].max()}",
+            'overall_attendance_rate': f"{df['attended'].mean()*100:.2f}%",
             'generated_at': datetime.now().isoformat()
         }
         
         metadata_path = output_dir / 'metadata.yaml'
         with open(metadata_path, 'w') as f:
-            yaml.dump(metadata, f)
-        logger.info(f"Saved metadata to {metadata_path}")
+            yaml.dump(metadata, f, default_flow_style=False)
+        logger.info(f"✅ Saved metadata to {metadata_path}")
         
         return data_path, profiles_path
 
@@ -213,15 +245,21 @@ def main():
     logger.info(f"Total records: {len(df):,}")
     logger.info(f"Overall attendance rate: {df['attended'].mean()*100:.2f}%")
     logger.info("\nAttendance by student type:")
-    print(df.groupby('student_type')['attended'].agg(['mean', 'count']))
+    type_summary = df.groupby('student_type')['attended'].agg(['mean', 'count'])
+    type_summary['mean'] = type_summary['mean'] * 100
+    type_summary.columns = ['Attendance %', 'Records']
+    print(type_summary)
     
     # Save data
     data_path, profiles_path = generator.save_data(df, profiles)
     
     logger.info("\n" + "=" * 60)
-    logger.info("✅ Data generation complete!")
+    logger.info("✅ DATA GENERATION COMPLETE!")
     logger.info("=" * 60)
-    logger.info(f"Next step: python src/feature_engineering.py")
+    logger.info(f"\n📁 Files saved:")
+    logger.info(f"   - {data_path}")
+    logger.info(f"   - {profiles_path}")
+    logger.info(f"\n🚀 Next step: python src/feature_engineering.py")
 
 
 if __name__ == '__main__':

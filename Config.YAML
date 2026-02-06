@@ -1,0 +1,151 @@
+# ========================================
+# SMART ATTENDANCE RISK ANALYZER - CONFIG
+# ========================================
+
+project:
+  name: "Smart Attendance Risk Analyzer"
+  version: "2.0.0"
+  author: "Your Name"
+  created: "2026-02-06"
+
+data:
+  num_students: 20000
+  num_days: 90
+  start_date: "2023-09-01"
+  
+  departments:
+    - "Computer Science"
+    - "Electrical Engineering"
+    - "Mechanical Engineering"
+    - "Civil Engineering"
+    - "Business Administration"
+    - "Mathematics"
+  
+  years: [1, 2, 3, 4]
+  
+  student_types:
+    excellent: 0.25
+    average: 0.45
+    struggling: 0.20
+    erratic: 0.10
+  
+  attendance_probabilities:
+    excellent: [0.90, 0.98]
+    average: [0.70, 0.85]
+    struggling: [0.50, 0.70]
+    erratic: [0.40, 0.90]
+  
+  noise:
+    label_flip_rate: 0.10
+    feature_noise_std: 0.05
+  
+  courses_per_student: 6
+  sessions_per_day: 4
+
+features:
+  windows:
+    short: 7
+    medium: 14
+    long: 30
+  
+  risk_thresholds:
+    low_attendance_threshold: 0.75
+    high_absence_streak: 3
+    low_consistency_threshold: 0.15
+
+model:
+  test_size: 0.25
+  validation_size: 0.15
+  random_state: 42
+  use_temporal_split: true
+  temporal_split_date: "2024-01-01"
+  
+  algorithms:
+    - "xgboost"
+    - "random_forest"
+    - "lightgbm"
+  
+  xgboost:
+    n_estimators: 200
+    max_depth: 6
+    learning_rate: 0.05
+    subsample: 0.8
+    colsample_bytree: 0.8
+    random_state: 42
+  
+  random_forest:
+    n_estimators: 150
+    max_depth: 10
+    min_samples_split: 10
+    min_samples_leaf: 5
+    random_state: 42
+  
+  lightgbm:
+    n_estimators: 200
+    max_depth: 6
+    learning_rate: 0.05
+    num_leaves: 31
+    random_state: 42
+  
+  ensemble:
+    use_weighted: true
+    cross_validation_folds: 5
+
+risk_levels:
+  high_risk:
+    threshold: 0.70
+    color: "#EF4444"
+    label: "High Risk"
+    intervention: "Immediate counseling + parent contact + academic support"
+  warning:
+    threshold: 0.80
+    color: "#F59E0B"
+    label: "Warning"
+    intervention: "Weekly check-ins + study group recommendation"
+  safe:
+    threshold: 1.00
+    color: "#10B981"
+    label: "Safe"
+    intervention: "Continue current approach + peer mentoring opportunity"
+
+evaluation:
+  primary_metric: "roc_auc"
+  additional_metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+  plots:
+    - "confusion_matrix"
+    - "roc_curve"
+    - "precision_recall_curve"
+    - "feature_importance"
+  shap:
+    enabled: true
+    num_samples: 100
+    num_examples: 10
+
+dashboard:
+  title: "🎓 Smart Attendance Risk Analyzer"
+  theme: "light"
+  page_icon: "📊"
+  auto_refresh: false
+  refresh_interval_seconds: 300
+  students_per_page: 50
+
+output:
+  save_models: true
+  save_data: true
+  save_plots: true
+  save_reports: true
+  paths:
+    models: "models/"
+    data: "data/"
+    plots: "outputs/plots/"
+    reports: "outputs/reports/"
+
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(levelname)s - %(message)s"
+  save_to_file: true
+  log_file: "outputs/logs/app.log"
