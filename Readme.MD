@@ -222,7 +222,7 @@ Modify thresholds, student distribution, or model hyperparameters without touchi
 - [x] Realistic data generation
 - [x] Ensemble model
 - [x] SHAP explainability
-- [ ] Streamlit dashboard
+- [x] Streamlit dashboard
 - [ ] Deployment to Streamlit Cloud
 
 ### v2.1 (Next)
@@ -252,10 +252,10 @@ MIT License - see [LICENSE](LICENSE)
 
 ## 👤 Author
 
-**Your Name**  
+**Mohammed Abdul Rahman**  
 🌐 [Portfolio](https://yourwebsite.com)  
-💼 [LinkedIn](https://linkedin.com/in/yourprofile)  
-📧 your.email@example.com
+💼 linkedin.com/in/abdul-rahman-mohammed-958527329
+📧abdulrahman161206@gmail.com
 
 ---
 
