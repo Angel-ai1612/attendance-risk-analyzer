@@ -1,0 +1,21 @@
+feature_names:
+- attendance_rate_7d
+- attendance_rate_14d
+- attendance_rate_30d
+- consistency_score
+- absence_streak_max
+- absence_streak_current
+- trend_slope
+- weekend_vs_weekday_ratio
+- early_vs_late_month_ratio
+- days_since_last_absence
+- total_sessions_missed
+- has_multiple_risk_factors
+- future_attendance_rate
+- future_at_risk
+future_at_risk_count: 11933
+future_at_risk_percentage: 59.66%
+generated_at: '2026-02-07T16:45:34.159604'
+num_features: 12
+num_students: 20000
+prediction_horizon: 14 days ahead (using days 1-60 to predict days 75-90)

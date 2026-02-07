@@ -16,17 +16,13 @@ build/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# Data (don't commit large datasets)
-data/
-*.csv
-*.parquet
-*.h5
-*.hdf5
+# Data (keep sample data for deployment)
+# data/
+# *.csv
 
-# Models (too large for Git)
-models/*.pkl
-models/*.joblib
-models/*.h5
+# Models (keep for deployment)
+# models/*.pkl
+# models/*.joblib
 
 # Outputs (generated files)
 outputs/plots/*.png
